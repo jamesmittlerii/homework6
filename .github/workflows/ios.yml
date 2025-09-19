@@ -46,7 +46,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        device: [ 'iPhone 16 Pro', 'iPad Pro 13-inch (M4)' ]
+        device: [ 'Any iOS Simulator' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
