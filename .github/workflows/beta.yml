@@ -20,6 +20,14 @@ jobs:
 
 #      - name: Setup Fastlane CI environment
 #        run: bundle exec fastlane setup_ci # Ensure CI environment is set up for Fastlane
+      
+#      - name: Run Fastlane Match
+#        env:
+#          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+#          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+#          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+#        run: bundle exec fastlane match appstore # Or `adhoc` depending on your lane
+
 
       - name: Run Fastlane Beta Lane
         env:
