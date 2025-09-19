@@ -34,21 +34,26 @@ struct ImageGridItem: View {
 /* The background image was pretty big. When I just displayed it
  behind the grid you couldn't see it. So I am shrinking it to tile it */
 
-func smallTiledImage() -> Image {
-    // Get the original image from the asset catalog.
-    guard let uiImage = UIImage(named: "background") else {
-        return Image(systemName: "photo") // Fallback for safety.
+func smallTiledImage() -> some View {
+    // Check if the image exists and create a base SwiftUI Image.
+    let baseImage: Image
+    if let uiImage = UIImage(named: "background") {
+        let targetSize = CGSize(width: 200, height: 130)
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        let newImage = renderer.image { _ in
+            uiImage.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+        baseImage = Image(uiImage: newImage)
+    } else {
+        baseImage = Image(systemName: "photo")
     }
     
-    // Resize the image to 200x130
-    let targetSize = CGSize(width: 200, height: 130) // Set your desired tile size here
-    let renderer = UIGraphicsImageRenderer(size: targetSize)
-    let newImage = renderer.image { _ in
-        uiImage.draw(in: CGRect(origin: .zero, size: targetSize))
-    }
-    
-    // Return the new, smaller image as a SwiftUI Image.
-    return Image(uiImage: newImage)
+    // Apply all modifiers to the single, final view.
+    return baseImage
+        .resizable()
+        .resizable(resizingMode: .tile)
+        .ignoresSafeArea()
+        .accessibilityIdentifier("imageBackground")
 }
 
 struct ContentView: View {
@@ -70,9 +75,7 @@ struct ContentView: View {
             // Background image first (tiled)
 
             smallTiledImage()
-                .resizable()
-                .resizable(resizingMode: .tile)
-                .ignoresSafeArea()
+                
             
             // now our grid in a vstack
             VStack {

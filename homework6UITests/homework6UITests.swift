@@ -23,6 +23,16 @@ final class homework6UITests: XCTestCase {
             }
         }
 
+    func testBackgroundImagesExists() throws {
+           let imageItem = app.images["imageBackground"]
+            
+            // Assert that each image element exists.
+            XCTAssertTrue(imageItem.exists, "The background image should exist.")
+        }
+    
+
+    
+    
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
 
