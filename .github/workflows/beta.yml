@@ -18,8 +18,8 @@ jobs:
       - name: Install Fastlane
         run: bundle install
 
-      - name: Setup Fastlane CI environment
-        run: bundle exec fastlane setup_ci # Ensure CI environment is set up for Fastlane
+#      - name: Setup Fastlane CI environment
+#        run: bundle exec fastlane setup_ci # Ensure CI environment is set up for Fastlane
 
       - name: Run Fastlane Beta Lane
         env:
