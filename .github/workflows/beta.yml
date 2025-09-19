@@ -1,11 +1,30 @@
 name: Push Beta
 on: workflow_dispatch
+
 jobs:
-  build:
-    runs-on: macos-latest
+  deploy-beta:
+    runs-on: macos-latest # Use a macOS runner for iOS builds
+
     steps:
-      - uses: actions/checkout@v2
-      - run: fastlane beta
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Checkout the repository code
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1' # Specify your Ruby version
+          bundler-cache: true # Install Gemfile dependencies with bundler
+
+      - name: Install Fastlane
+        run: bundle install
+
+      - name: Setup Fastlane CI environment
+        run: bundle exec fastlane setup_ci # Ensure CI environment is set up for Fastlane
+
+      - name: Run Fastlane Beta Lane
         env:
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }} # Use an App-Specific Password for App Store Connect
+          FASTLANE_USER: ${{ secrets.FASTLANE_USER }} # Your Apple ID email
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }} # Passphrase for your match repository
+        run: bundle exec fastlane beta # Execute your 'beta' lane defined in Fastfile
