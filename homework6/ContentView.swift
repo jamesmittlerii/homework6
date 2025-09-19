@@ -27,6 +27,7 @@ struct ImageGridItem: View {
             .scaledToFill()
             .clipped()
             .aspectRatio(1, contentMode: .fit)  // Enforce a square aspect ratio
+            .accessibilityIdentifier("imageGridItem_\(imageName)") // Added identifier
     }
 }
 
@@ -51,12 +52,14 @@ func smallTiledImage() -> Image {
 }
 
 struct ContentView: View {
+    
+    init() {}
 
     // get our iamge names
-    private let imageNames = (1...9).map { "c\($0)" }
+    let imageNames = (1...9).map { "c\($0)" }
 
     // Define the grid layout with 3 flexible columns.
-    private let columns: [GridItem] = Array(
+    let columns: [GridItem] = Array(
         repeating: .init(.flexible()),
         count: 3
     )
@@ -79,6 +82,7 @@ struct ContentView: View {
                     }
                 }
                 .padding()
+                .accessibilityIdentifier("imageGrid") // Added identifier
 
             }
 
