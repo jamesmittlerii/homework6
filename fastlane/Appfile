@@ -1,0 +1,8 @@
+app_identifier("com.rheosoft.homework6") # The bundle identifier of your app
+apple_id("chicagozer@gmail.com") # Your Apple Developer Portal username
+
+itc_team_id("128156755") # App Store Connect Team ID
+team_id("L97LVVC8Y4") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
