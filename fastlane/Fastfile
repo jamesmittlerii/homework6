@@ -34,7 +34,7 @@ platform :ios do
     build_app(scheme: "homework6")
     upload_to_testflight(
     #    api_key: api_key,
-      apple_id: ENV['FASTLANE_APPLE_APPLICATION_ID']
+      apple_id: ENV['FASTLANE_APPLE_APPLICATION_ID'],
       skip_waiting_for_build_processing: false
     )
   end
