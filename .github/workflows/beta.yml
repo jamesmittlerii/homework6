@@ -1,6 +1,10 @@
 name: Push Beta
 on: workflow_dispatch
 
+permissions:
+      contents: write
+      pull-requests: write
+
 jobs:
   deploy-beta:
     runs-on: macos-latest # Use a macOS runner for iOS builds
