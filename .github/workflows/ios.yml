@@ -105,19 +105,19 @@ jobs:
         with:
            max_attempts: 3 # The maximum number of times to run the command
            timeout_minutes: 30 # How long to wait before timing out each attempt
-        command: |
-           scheme="${{ steps.set_scheme.outputs.scheme }}"
-           platform="iOS Simulator"
-           device_name="${{ matrix.device }}"
-           if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then
-             filetype_parameter="workspace"
-             file_to_build="`ls -A | grep -i \\.xcworkspace\$`"
-           else
-             filetype_parameter="project"
-             file_to_build="`ls -A | grep -i \\.xcodeproj\$`"
-           fi
-           file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
-           xcodebuild test-without-building -scheme "$scheme" -"$filetype_parameter" "$file_to_build" -destination "platform=$platform,name=$device_name" -derivedDataPath 'DerivedData'
+           command: |
+              scheme="${{ steps.set_scheme.outputs.scheme }}"
+              platform="iOS Simulator"
+              device_name="${{ matrix.device }}"
+              if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then
+                filetype_parameter="workspace"
+                file_to_build="`ls -A | grep -i \\.xcworkspace\$`"
+              else
+                filetype_parameter="project"
+                file_to_build="`ls -A | grep -i \\.xcodeproj\$`"
+              fi
+              file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
+              xcodebuild test-without-building -scheme "$scheme" -"$filetype_parameter" "$file_to_build" -destination "platform=$platform,name=$device_name" -derivedDataPath 'DerivedData'
 
 #      - name: Run Tests
 #        env:
