@@ -31,7 +31,7 @@ platform :ios do
     increment_build_number(xcodeproj: "homework6.xcodeproj")
     commit_version_bump(
       message: "Bump version from Fastlane",
-      force: false,
+      force: true,
       xcodeproj: "homework6.xcodeproj"
     )
     push_to_git_remote # Push the committed changes
