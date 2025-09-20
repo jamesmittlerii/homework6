@@ -29,9 +29,22 @@
 		D483B9E62E7C7EBA00AE137A /* homework6UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = homework6UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D4B3DE8E2E7E823E0004A9D3 /* Exceptions for "homework6" folder in "homework6" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D483B9CE2E7C7EB800AE137A /* homework6 */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D483B9D12E7C7EB800AE137A /* homework6 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D4B3DE8E2E7E823E0004A9D3 /* Exceptions for "homework6" folder in "homework6" target */,
+			);
 			path = homework6;
 			sourceTree = "<group>";
 		};
@@ -402,7 +415,10 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = L97LVVC8Y4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = homework6/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Show some Zssss";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -435,7 +451,10 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = L97LVVC8Y4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = homework6/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Show some Zssss";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
