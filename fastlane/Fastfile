@@ -29,12 +29,20 @@ platform :ios do
     #setup_ci if ENV['CI']
     #match(type: 'appstore')
     increment_build_number(xcodeproj: "homework6.xcodeproj")
+    commit_version_bump(
+      message: "Bump version to #{version_number} (#{build_number})",
+      force: false,
+      include: ["Info.plist", "homework6.xcodeproj/project.pbxproj"]
+    )
+    push_to_git_remote # Push the committed changes
           
 
     build_app(scheme: "homework6")
+
+    app_store_connect_api_key
     upload_to_testflight(
     #    api_key: api_key,
-      apple_id: ENV['FASTLANE_APPLE_APPLICATION_ID'],
+    #  apple_id: ENV['FASTLANE_APPLE_APPLICATION_ID'],
       skip_waiting_for_build_processing: false
     )
   end
