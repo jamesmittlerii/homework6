@@ -22,22 +22,9 @@ jobs:
       - name: Install Fastlane
         run: bundle install
 
-#      - name: Setup Fastlane CI environment
-#        run: bundle exec fastlane setup_ci # Ensure CI environment is set up for Fastlane
-      
-#      - name: Run Fastlane Match
-#        env:
-#          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-#          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
-#          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-#        run: bundle exec fastlane match appstore # Or `adhoc` depending on your lane
-
-
       - name: Run Fastlane Beta Lane
         env:
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }} # Use an App-Specific Password for App Store Connect
-#          FASTLANE_USER: ${{ secrets.FASTLANE_USER }} # Your Apple ID email
-#          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }} # Your Apple ID password
           FASTLANE_APPLE_APPLICATION_ID:  ${{ secrets.FASTLANE_APPLE_APPLICATION_ID }} 
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }} # Your Apple ID email
           APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_CONTENT}} # Your Apple ID email

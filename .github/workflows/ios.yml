@@ -1,5 +1,9 @@
 name: iOS parallel test workflow
 
+permissions:
+      contents: write
+      pull-requests: write
+
 on:
   push:
     branches: [ "**" ]
@@ -7,6 +11,37 @@ on:
     branches: [ "main" ]
 
 jobs:
+
+  deploy-beta:
+    if: github.ref == 'refs/heads/main'
+    name: Deploy to Test Flight
+    needs: test
+    runs-on: macos-latest # Use a macOS runner for iOS builds
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Checkout the repository code
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2' # Specify your Ruby version
+          bundler-cache: true # Install Gemfile dependencies with bundler
+
+      - name: Install Fastlane
+        run: bundle install
+
+      - name: Run Fastlane Beta Lane
+        env:
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }} # Use an App-Specific Password for App Store Connect
+          FASTLANE_APPLE_APPLICATION_ID:  ${{ secrets.FASTLANE_APPLE_APPLICATION_ID }}
+          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }} # Your Apple ID email
+          APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_CONTENT}} # Your Apple ID email
+          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID}} # Your Apple ID email
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }} # Passphrase for your match repository
+        run: bundle exec fastlane beta # Execute your 'beta' lane defined in Fastfile
+
   build:
     name: Build default scheme
     runs-on: macos-latest
