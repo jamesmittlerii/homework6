@@ -32,7 +32,7 @@ platform :ios do
     commit_version_bump(
       message: "Bump version from Fastlane",
       force: false,
-      include: ["Info.plist", "homework6.xcodeproj/project.pbxproj"]
+      xcodeproj: "homework6.xcodeproj/project.pbxproj"
     )
     push_to_git_remote # Push the committed changes
           
