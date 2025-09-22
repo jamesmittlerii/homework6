@@ -1,16 +1,14 @@
-name: iOS parallel test workflow
+name: BW iOS parallel test workflow
 
 permissions:
       contents: write
       pull-requests: write
 
 on:
-  workflow_call:
-    secrets:
-      FASTLANE_APPLE_APPLICATION_ID:
-        required: true
-      BW_ACCESS_TOKEN:
-        required: true
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
 
