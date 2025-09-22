@@ -13,6 +13,6 @@ on:
 
 jobs:
   call-reusable-workflow:
-    uses: jamesmittlerii/workflows/.github/workflows/ios.yml@main # Or a specific commit SHA or tag
+    uses: jamesmittlerii/workflows/.github/workflows/iosnotest.yml@main # Or a specific commit SHA or tag
     secrets: inherit
 
