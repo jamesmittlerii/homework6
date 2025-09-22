@@ -22,7 +22,7 @@ jobs:
       - name: Extract project ID from secret
         id: extract
         env:
-          SERVICE_ACCOUNT_EMAIL: ${{ secrets.WIF_PROVIDER }}
+          SERVICE_ACCOUNT_EMAIL: ${{ secrets.WIF_SERVICE_ACCOUNT }}
         run: |
           # Use shell parameter expansion to remove the prefix and suffix
           PROJECT_ID=${SERVICE_ACCOUNT_EMAIL#*@}
