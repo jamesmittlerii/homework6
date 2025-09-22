@@ -1,0 +1,39 @@
+name: BW iOS parallel test workflow
+
+permissions:
+      contents: write
+      pull-requests: write
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Google Auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }} # GitHub secret for your Workload Identity Provider URL
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }} # GitHub secret for your Service Account email
+
+      - name: Get secrets from Secret Manager
+        uses: google-github-actions/get-secretmanager-secrets@v2
+        with:
+          secrets: |
+            MY_SECRET: projects/golden-bloom-472916-p5/secrets/APP_STORE_CONNECT_API_KEY_ISSUER_ID/versions/latest
+            ANOTHER_SECRET: projects/PROJECT_ID/secrets/APP_STORE_CONNECT_API_KEY_KEY_ID/versions/latest
+
+      - name: Use secrets
+        run: |
+          echo "My secret value: ${{ steps.get-secrets.outputs.MY_SECRET }}"
+          echo "Another secret value: ${{ steps.get-secrets.outputs.ANOTHER_SECRET }}"
+
+
+
