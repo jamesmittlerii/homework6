@@ -4,6 +4,7 @@ name: Shared IOS build/test/deploy Workflow
 permissions:
       contents: write
       pull-requests: write
+      id-token: write
 
 on:
   push:
