@@ -1,8 +1,9 @@
-name: BW iOS parallel test workflow
+name: Google Cloud secrets extract
 
 permissions:
       contents: write
       pull-requests: write
+      id-token: write
 
 on:
   push:
