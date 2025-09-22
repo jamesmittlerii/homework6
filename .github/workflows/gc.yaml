@@ -49,12 +49,14 @@ jobs:
       - name: Get secrets from Secret Manager
         uses: google-github-actions/get-secretmanager-secrets@v2
         with:
+          export_to_environment: true
           secrets: |
             MY_SECRET: projects/${{ steps.extract.outputs.project_id }}/secrets/APP_STORE_CONNECT_API_KEY_ISSUER_ID/versions/latest
             ANOTHER_SECRET: projects/${{ steps.extract.outputs.project_id }}/secrets/APP_STORE_CONNECT_API_KEY_KEY_ID/versions/latest
 
       - name: Use secrets
         run: |
+          env
           echo "My secret value: ${{ steps.get-secrets.outputs.MY_SECRET }}"
           echo "Another secret value: ${{ steps.get-secrets.outputs.ANOTHER_SECRET }}"
 
