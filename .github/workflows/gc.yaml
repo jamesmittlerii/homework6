@@ -18,6 +18,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+
+      - name: Extract project ID from secret
+        id: extract
+        env:
+          SERVICE_ACCOUNT_EMAIL: ${{ secrets.WIF_PROVIDER }}
+        run: |
+          # Use shell parameter expansion to remove the prefix and suffix
+          PROJECT_ID=${SERVICE_ACCOUNT_EMAIL#*@}
+          PROJECT_ID=${PROJECT_ID%.iam.gserviceaccount.com}
+          
+          # Print the extracted ID for verification.
+          # Note: The secret value is automatically masked in logs.
+          echo "Extracted project ID: $PROJECT_ID"
+          
+          # Set the project ID as a step output for use in other steps
+          echo "project_id=$PROJECT_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Use the extracted project ID
+        run: |
+          echo "The project ID is ${{ steps.extract.outputs.project_id }}"
+
       - name: Google Auth
         uses: google-github-actions/auth@v2
         with:
@@ -28,8 +49,8 @@ jobs:
         uses: google-github-actions/get-secretmanager-secrets@v2
         with:
           secrets: |
-            MY_SECRET: projects/golden-bloom-472916-p5/secrets/APP_STORE_CONNECT_API_KEY_ISSUER_ID/versions/latest
-            ANOTHER_SECRET: projects/golden-bloom-472916-p5/secrets/APP_STORE_CONNECT_API_KEY_KEY_ID/versions/latest
+            MY_SECRET: projects/${{ steps.extract.outputs.project_id }}/secrets/APP_STORE_CONNECT_API_KEY_ISSUER_ID/versions/latest
+            ANOTHER_SECRET: projects/${{ steps.extract.outputs.project_id }}/secrets/APP_STORE_CONNECT_API_KEY_KEY_ID/versions/latest
 
       - name: Use secrets
         run: |
