@@ -21,14 +21,6 @@ jobs:
       CURRENT_BRANCH: ${{ github.ref_name }}
 
     steps:
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm' # Use npm cache to speed up installations
-      - name: Install dependencies
-        run: npm ci # Use `npm ci` for clean and consistent installs
-
       - name: Get Secrets
         uses: bitwarden/sm-action@v2
         with:
