@@ -52,7 +52,7 @@ final class homework6UITests: XCTestCase {
    
 
     @MainActor
-    func testLaunchPerformance() throws {
+    func disabled_testLaunchPerformance() throws {
         
         try XCTSkipIf(true, "This test is temporarily disabled.")
         // This measures how long it takes to launch your application.

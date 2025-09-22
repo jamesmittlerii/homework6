@@ -18,7 +18,7 @@ final class homework6UITestsLaunchTests: XCTestCase {
     }
 
     @MainActor
-    func testLaunch() throws {
+    func disabled_testLaunch() throws {
         
         try XCTSkipIf(true, "This test is temporarily disabled.")
         
