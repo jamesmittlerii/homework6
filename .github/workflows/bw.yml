@@ -1,0 +1,107 @@
+name: iOS parallel test workflow
+
+permissions:
+      contents: write
+      pull-requests: write
+
+on:
+  workflow_call:
+    secrets:
+      FASTLANE_APPLE_APPLICATION_ID:
+        required: true
+      BW_ACCESS_TOKEN:
+        required: true
+
+jobs:
+
+  deploy-beta:
+#    if: github.ref == 'refs/heads/testing'
+    name: Deploy to Test Flight
+    needs: build 
+    runs-on: macos-latest # Use a macOS runner for iOS builds
+    env:
+      CURRENT_BRANCH: ${{ github.ref_name }}
+
+    steps:
+
+      - name: Get Secrets
+        uses: bitwarden/sm-action@v2
+        with:
+          access_token: ${{ secrets.BW_ACCESS_TOKEN }}
+          secrets: |
+            9d68d23a-51bc-476a-a443-b3600010870f > APP_STORE_CONNECT_API_KEY_ISSUER_ID
+            91d4a8c5-bab6-4cc9-a2fa-b36000125905 > APP_STORE_CONNECT_API_KEY_KEY_CONTENT
+            b01c31ac-6afa-4ae4-83de-b3600010b223 > APP_STORE_CONNECT_API_KEY_KEY_ID
+            6b37197b-f0c4-4b4a-9910-b3600011f4a2 > FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD
+            069d244e-72c8-44d5-a91f-b360001103a2 > MATCH_GIT_BASIC_AUTHORIZATION
+            6837c89c-4e9f-4f9d-b881-b36000112282 > MATCH_PASSWORD
+            d8d3add3-0e8c-421c-a3a8-b36000117f0c > PAT_TOKEN
+
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Checkout the repository code
+        with:
+          submodules: 'recursive'
+          fetch-depth: 0
+          token: ${{ env.PAT_TOKEN }}
+
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2' # Specify your Ruby version
+          bundler-cache: true # Install Gemfile dependencies with bundler
+
+      - name: Install Fastlane
+        run: bundle install
+
+      - name: Set PROJECT_NAME environment variable
+        id: set_project_name # Add an ID to the step to create an output variable
+        run: |
+          # Find the .xcodeproj file, remove the .xcodeproj extension, and assign it to the variable.
+          PROJECT_NAME=$(basename *.xcodeproj .xcodeproj)
+          
+          # Write the variable to the GITHUB_ENV file so it's available to subsequent steps.
+          echo "PROJECT_NAME=$PROJECT_NAME" >> "$GITHUB_ENV"
+          
+          # Write the variable to the GITHUB_OUTPUT file so it can be used by other jobs.
+          echo "project_name=$PROJECT_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Run Fastlane Beta Lane
+        env:
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ env.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }} # Use an App-Specific Password for App Store Connect
+          FASTLANE_APPLE_APPLICATION_ID:  ${{ env.FASTLANE_APPLE_APPLICATION_ID }}
+          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ env.APP_STORE_CONNECT_API_KEY_ISSUER_ID }} # Your Apple ID email
+          APP_STORE_CONNECT_API_KEY_KEY: ${{ env.APP_STORE_CONNECT_API_KEY_KEY_CONTENT}} # Your Apple ID email
+          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ env.APP_STORE_CONNECT_API_KEY_KEY_ID}} # Your Apple ID email
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ env.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_PASSWORD: ${{ env.MATCH_PASSWORD }} # Passphrase for your match repository
+        run: bundle exec fastlane beta # Execute your 'beta' lane defined in Fastfile
+
+  build:
+    name: Build default scheme
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set Default Scheme
+        id: set_scheme
+        run: |
+          scheme_list=$(xcodebuild -list -json | tr -d "\n")
+          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'][0]")
+          echo "scheme=$default" >> $GITHUB_OUTPUT
+      - name: Build for Testing
+        env:
+          scheme: ${{ steps.set_scheme.outputs.scheme }}
+          platform: 'iOS Simulator'
+        run: |
+          device=`xcrun xctrace list devices 2>&1 | grep -oE 'iPhone.*?[^\(]+' | head -1 | awk '{$1=$1;print}' | sed -e "s/ Simulator$//"`
+          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
+          file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
+          xcodebuild build-for-testing -scheme "$scheme" -"$filetype_parameter" "$file_to_build" -destination "platform=$platform,name=$device" -derivedDataPath './DerivedData'
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: built-app
+          path: DerivedData/Build/Products/
+          retention-days: 1
+
