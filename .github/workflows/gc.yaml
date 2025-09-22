@@ -18,45 +18,45 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Step 1: Authenticate with Google Cloud
-      - name: Authenticate with Google Cloud
-        id: auth
-        uses: 'google-github-actions/auth@v2'
-        with:
-          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
-          service_account: ${{ secrets.WIF_PROVIDER }}
 
-      # Step 2: Extract the project ID
-      - name: Extract project ID
+      - name: Extract project ID from secret
         id: extract
         env:
           SERVICE_ACCOUNT_EMAIL: ${{ secrets.WIF_PROVIDER }}
         run: |
+          # Use shell parameter expansion to remove the prefix and suffix
           PROJECT_ID=${SERVICE_ACCOUNT_EMAIL#*@}
           PROJECT_ID=${PROJECT_ID%.iam.gserviceaccount.com}
+          
+          # Print the extracted ID for verification.
+          # Note: The secret value is automatically masked in logs.
+          echo "Extracted project ID: $PROJECT_ID"
+          echo "$PROJECT_ID" | sed 's/./& /g'
+          
+          # Set the project ID as a step output for use in other steps
           echo "project_id=$PROJECT_ID" >> "$GITHUB_OUTPUT"
 
-      # Step 3: Construct the secrets list in a variable
-      # This avoids parsing issues by preparing the input as a single variable.
-      - name: Prepare secrets input
-        id: prepare_secrets
+      - name: Use the extracted project ID
         run: |
-          SECRETS_INPUT=$(cat <<-END
-            MY_SECRET: projects/${{ steps.extract.outputs.project_id }}/secrets/APP_STORE_CONNECT_API_KEY_ISSUER_ID/versions/latest
-            ANOTHER_SECRET: projects/${{ steps.extract.outputs.project_id }}/secrets/APP_STORE_CONNECT_API_KEY_KEY_ID/versions/latest
-          END
-          )
-          echo "secrets_input=$SECRETS_INPUT" >> "$GITHUB_OUTPUT"
+          echo "The project ID is ${{ steps.extract.outputs.project_id }}"
 
-      # Step 4: Get secrets from Secret Manager using the prepared variable
+      - name: Google Auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }} # GitHub secret for your Workload Identity Provider URL
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }} # GitHub secret for your Service Account email
+
       - name: Get secrets from Secret Manager
-        id: get-secrets
         uses: google-github-actions/get-secretmanager-secrets@v2
         with:
-          secrets: ${{ steps.prepare_secrets.outputs.secrets_input }}
-      
-      # Step 5: Use the fetched secrets
+          secrets: |
+            MY_SECRET: projects/${{ steps.extract.outputs.project_id }}/secrets/APP_STORE_CONNECT_API_KEY_ISSUER_ID/versions/latest
+            ANOTHER_SECRET: projects/${{ steps.extract.outputs.project_id }}/secrets/APP_STORE_CONNECT_API_KEY_KEY_ID/versions/latest
+
       - name: Use secrets
         run: |
-          echo "My secret is: ${{ steps.get-secrets.outputs.MY_SECRET }}"
-          echo "Another secret is: ${{ steps.get-secrets.outputs.ANOTHER_SECRET }}"
+          echo "My secret value: ${{ steps.get-secrets.outputs.MY_SECRET }}"
+          echo "Another secret value: ${{ steps.get-secrets.outputs.ANOTHER_SECRET }}"
+
+
+
